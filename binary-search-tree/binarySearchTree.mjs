@@ -10,15 +10,12 @@ class Node {
 
 class Tree {
 	constructor(array) {
-		this.initArray = array;
-		this.root = null;
+		this.root = this.buildTree(array);
 	}
 
 	buildTree(array) {
 		array = removeDupicates(mergeSort(array));
-		this.root = sortedArrayToBST(array, 0, array.length - 1);
-
-		return this.root;
+		return sortedArrayToBST(array, 0, array.length - 1);
 	}
 
 	insert(value, root = this.root) {
@@ -32,6 +29,43 @@ class Tree {
 			root.left = this.insert(value, root.left);
 		}
 
+		return root;
+	}
+
+	#getSuccessor(current) {
+		current = current.right;
+		while (current != null && current.left != null) {
+			current = current.left;
+		}
+		return current;
+	}
+
+	deleteItem(item, root = this.root) {
+		if (root == null) {
+			return root;
+		}
+
+		if (item > root.data) {
+			root.right = this.deleteItem(item, root.right);
+		} else if (item < root.data) {
+			root.left = this.deleteItem(item, root.left);
+		} else {
+			if (root.left == null) {
+				let temp = root.right;
+				root = null;
+				return temp;
+			}
+
+			if (root.right == null) {
+				let temp = root.left;
+				root = null;
+				return temp;
+			}
+
+			let successor = this.#getSuccessor(root);
+			root.data = successor.data;
+			root.right = this.deleteItem(successor.data, root.right);
+		}
 		return root;
 	}
 }
@@ -77,10 +111,8 @@ let tree = new Tree([
 	2, 1, 5, 35, 55, 3, 5, 7, 87, 98, 1, 2, 5, 6, 7, 8, 6, 54,
 ]);
 
-tree.buildTree([2, 1, 5, 35, 55, 3, 5, 7, 87, 98, 1, 2, 5, 6, 7, 8, 6, 54]);
-
 prettyPrint(tree.root);
 
-tree.insert(100);
+tree.deleteItem(7);
 
 prettyPrint(tree.root);

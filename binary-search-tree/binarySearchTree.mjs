@@ -82,6 +82,25 @@ class Tree {
 			return this.find(value, root.left);
 		}
 	}
+
+	leverOrder(callback) {
+		if (typeof callback !== "function") {
+			throw new Error("A callback function must be provided.");
+		}
+		let queue = [];
+		let root = this.root;
+		if (!root) return;
+
+		queue.push(root);
+
+		while (queue.length > 0) {
+			let currentNode = queue[0];
+			callback(currentNode);
+			if (currentNode.left) queue.push(currentNode.left);
+			if (currentNode.right) queue.push(currentNode.right);
+			queue.splice(0, 1);
+		}
+	}
 }
 
 function removeDupicates(array) {
@@ -125,4 +144,8 @@ let tree = new Tree([
 	2, 1, 5, 35, 55, 3, 5, 7, 87, 98, 1, 2, 5, 6, 7, 8, 6, 54,
 ]);
 
-console.log(tree.find(900));
+prettyPrint(tree.root);
+
+tree.leverOrder((node) => {
+	console.log(node.data);
+});

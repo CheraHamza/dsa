@@ -101,6 +101,32 @@ class Tree {
 			queue.splice(0, 1);
 		}
 	}
+
+	inOrder(callback) {
+		if (typeof callback !== "function") {
+			throw new Error("A callback function must be provided.");
+		}
+		let stack = [];
+		let current = this.root;
+		if (!current) return;
+
+		while (current != null || stack.length > 0) {
+			while (current != null) {
+				stack.push(current);
+				current = current.left;
+			}
+
+			current = stack.pop();
+			callback(current);
+			current = current.right;
+		}
+	}
+
+	preOrder(callback) {
+		if (typeof callback !== "function") {
+			throw new Error("A callback function must be provided.");
+		}
+	}
 }
 
 function removeDupicates(array) {
@@ -146,6 +172,6 @@ let tree = new Tree([
 
 prettyPrint(tree.root);
 
-tree.leverOrder((node) => {
+tree.inOrder((node) => {
 	console.log(node.data);
 });

@@ -40,15 +40,15 @@ class Tree {
 		return current;
 	}
 
-	deleteItem(item, root = this.root) {
+	deleteItem(value, root = this.root) {
 		if (root == null) {
 			return root;
 		}
 
-		if (item > root.data) {
-			root.right = this.deleteItem(item, root.right);
-		} else if (item < root.data) {
-			root.left = this.deleteItem(item, root.left);
+		if (value > root.data) {
+			root.right = this.deleteItem(value, root.right);
+		} else if (value < root.data) {
+			root.left = this.deleteItem(value, root.left);
 		} else {
 			if (root.left == null) {
 				let temp = root.right;
@@ -67,6 +67,20 @@ class Tree {
 			root.right = this.deleteItem(successor.data, root.right);
 		}
 		return root;
+	}
+
+	find(value, root = this.root) {
+		if (root == null) {
+			return "value doesn't exist";
+		}
+		if (root.data == value) {
+			return root;
+		}
+		if (value > root.data) {
+			return this.find(value, root.right);
+		} else if (value < root.data) {
+			return this.find(value, root.left);
+		}
 	}
 }
 
@@ -111,8 +125,4 @@ let tree = new Tree([
 	2, 1, 5, 35, 55, 3, 5, 7, 87, 98, 1, 2, 5, 6, 7, 8, 6, 54,
 ]);
 
-prettyPrint(tree.root);
-
-tree.deleteItem(7);
-
-prettyPrint(tree.root);
+console.log(tree.find(900));

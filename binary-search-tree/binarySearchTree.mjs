@@ -20,6 +20,20 @@ class Tree {
 
 		return this.root;
 	}
+
+	insert(value, root = this.root) {
+		if (root == null) {
+			root = new Node(value);
+		}
+
+		if (value > root.data) {
+			root.right = this.insert(value, root.right);
+		} else if (value < root.data) {
+			root.left = this.insert(value, root.left);
+		}
+
+		return root;
+	}
 }
 
 function removeDupicates(array) {
@@ -64,5 +78,9 @@ let tree = new Tree([
 ]);
 
 tree.buildTree([2, 1, 5, 35, 55, 3, 5, 7, 87, 98, 1, 2, 5, 6, 7, 8, 6, 54]);
+
+prettyPrint(tree.root);
+
+tree.insert(100);
 
 prettyPrint(tree.root);

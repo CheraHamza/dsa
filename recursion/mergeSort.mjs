@@ -22,7 +22,7 @@ function merge(listOne, listTwo) {
 	return resultList;
 }
 
-function mergeSort(list) {
+export function mergeSort(list) {
 	if (list.length < 2) {
 		return list;
 	} else {

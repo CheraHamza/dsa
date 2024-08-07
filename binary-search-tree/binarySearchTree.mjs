@@ -122,10 +122,82 @@ class Tree {
 		}
 	}
 
-	preOrder(callback) {
+	preOrder(callback, current = this.root) {
 		if (typeof callback !== "function") {
 			throw new Error("A callback function must be provided.");
 		}
+		if (!current) return;
+
+		callback(current);
+		this.preOrder(callback, current.left);
+		this.preOrder(callback, current.right);
+	}
+
+	postOrder(callback, current = this.root) {
+		if (typeof callback !== "function") {
+			throw new Error("A callback function must be provided.");
+		}
+
+		if (!current) return;
+		this.postOrder(callback, current.left);
+		this.postOrder(callback, current.right);
+		callback(current);
+	}
+
+	height(current = this.root) {
+		if (!current) {
+			return 0;
+		} else {
+			let left = this.height(current.left);
+			let right = this.height(current.right);
+
+			if (left > right) {
+				return left + 1;
+			} else {
+				return right + 1;
+			}
+		}
+	}
+
+	depth(value, current = this.root) {
+		if (!current) return;
+
+		let depth = -1;
+
+		if (
+			current.data == value ||
+			(depth = this.depth(value, current.left)) >= 0 ||
+			(depth = this.depth(value, current.right)) > 0
+		) {
+			return depth + 1;
+		}
+		return depth;
+	}
+
+	isBalanced(current = this.root) {
+		if (!current) return true;
+
+		const leftHeight = this.height(current.left);
+		const rightHeight = this.height(current.right);
+
+		if (
+			Math.abs(leftHeight - rightHeight) <= 1 &&
+			this.isBalanced(current.left) &&
+			this.isBalanced(current.right)
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	rebalance() {
+		let array = [];
+		this.preOrder((node) => {
+			array.push(node.data);
+		});
+
+		this.root = this.buildTree(array);
 	}
 }
 
@@ -165,13 +237,3 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 		prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
 	}
 };
-
-let tree = new Tree([
-	2, 1, 5, 35, 55, 3, 5, 7, 87, 98, 1, 2, 5, 6, 7, 8, 6, 54,
-]);
-
-prettyPrint(tree.root);
-
-tree.inOrder((node) => {
-	console.log(node.data);
-});

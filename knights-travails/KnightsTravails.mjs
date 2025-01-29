@@ -19,61 +19,70 @@ function getPossibleMoves(x, y) {
 
 function knightMoves(startingSquare, destSquare) {
 	let queue = [startingSquare];
-	let visitedMoves = [];
-	let track = [];
+	let visitedSquares = [];
+	let predecessorMap = [];
 	let arrived = false;
 
-	const firstTrace = {
+	const initialPositionTrace = {
 		pos: startingSquare,
 		predecessors: [],
 	};
 
-	track.push(firstTrace);
+	predecessorMap.push(initialPositionTrace);
 
 	while (!arrived) {
-		let currPos = queue[0];
+		let currSquare = queue[0];
 
-		if (currPos[0] == destSquare[0] && currPos[1] == destSquare[1]) {
+		if (currSquare[0] == destSquare[0] && currSquare[1] == destSquare[1]) {
 			arrived = true;
 		} else {
-			visitedMoves.push(currPos);
+			visitedSquares.push(currSquare);
 			queue.shift();
 
-			for (const move of getPossibleMoves(currPos[0], currPos[1])) {
+			for (const possibleSquare of getPossibleMoves(
+				currSquare[0],
+				currSquare[1]
+			)) {
 				let visited = false;
-				for (const visitedMove of visitedMoves) {
-					if (move[0] == visitedMove[0] && move[1] == visitedMove[1]) {
+				for (const visitedSquare of visitedSquares) {
+					if (
+						possibleSquare[0] == visitedSquare[0] &&
+						possibleSquare[1] == visitedSquare[1]
+					) {
 						visited = true;
 					}
 				}
 				if (!visited) {
-					queue.push(move);
+					queue.push(possibleSquare);
 					const getPredecessors = () => {
 						let predecessors = [];
-						for (const trace of track) {
+						for (const trace of predecessorMap) {
 							const square = trace.pos;
-							if (square[0] == currPos[0] && square[1] == currPos[1]) {
-								for (const move of trace.predecessors) {
-									predecessors.push(move);
+							if (square[0] == currSquare[0] && square[1] == currSquare[1]) {
+								for (const predecessor of trace.predecessors) {
+									predecessors.push(predecessor);
 								}
-								predecessors.push(currPos);
+								predecessors.push(currSquare);
 							}
 						}
 						return predecessors;
 					};
 					let tracked = false;
-					for (const trace of track) {
-						if (trace.pos[0] == move[0] && trace.pos[1] == move[1]) {
+					for (const trace of predecessorMap) {
+						if (
+							trace.pos[0] == possibleSquare[0] &&
+							trace.pos[1] == possibleSquare[1]
+						) {
 							tracked = true;
 						}
 					}
 					if (!tracked) {
 						let newTrace = {
-							pos: move,
+							pos: possibleSquare,
 							predecessors: getPredecessors(),
 						};
 
-						track.push(newTrace);
+						predecessorMap.push(newTrace);
 					}
 				}
 			}
@@ -83,7 +92,7 @@ function knightMoves(startingSquare, destSquare) {
 	let numberOfMoves = 0;
 	let shortestPath = [];
 
-	for (const trace of track) {
+	for (const trace of predecessorMap) {
 		let square = trace.pos;
 		if (square[0] == destSquare[0] && square[1] == destSquare[1]) {
 			shortestPath = trace.predecessors;
